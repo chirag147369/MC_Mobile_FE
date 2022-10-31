@@ -12,6 +12,7 @@ const colors = {
   inprogressStatusColor: '#4299f5',
   deliveredStatusColor: '#5af542',
   cancelStatusColor: '#ed324b',
+  black: '#000000',
 };
 
 export default colors;

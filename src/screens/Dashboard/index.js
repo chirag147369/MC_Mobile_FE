@@ -1,3 +1,4 @@
+/* eslint-disable react-native/no-inline-styles */
 import {
   Alert,
   FlatList,
@@ -32,6 +33,7 @@ import MyButton from '../../components/Button';
 import {en} from '../../localization/english';
 import MyTextInput from '../../components/TextInput';
 import {keyboardType} from '../../utility/types';
+import {images} from '../../assests/images/images';
 
 const Data = [
   {
@@ -176,8 +178,9 @@ export class Dashboard extends Component {
       async response => {
         console.log(response, 'from order status');
         const status = await response.result[0].filter(status => {
-          if (status.title == 'Pending' || status.title == 'Cancel')
+          if (status.title == 'Pending' || status.title == 'Cancel') {
             return status;
+          }
         });
         AsyncStorage.setItem('status', JSON.stringify(status));
       },
@@ -214,11 +217,19 @@ export class Dashboard extends Component {
     const user = await getUser();
     console.log(user);
     let address = '';
-    if (user.firstName) address = `${user.firstName} - `;
-    else if (user.lastName) address = `${user.lastName} - `;
-    else address = `${user.mobileNumber} - `;
-    if (!!user.address.city) address = `${address}${user.address.city}`;
-    if (!!user.address.pinCode) address = `${address}${user.address.pinCode}`;
+    if (user.firstName) {
+      address = `${user.firstName} - `;
+    } else if (user.lastName) {
+      address = `${user.lastName} - `;
+    } else {
+      address = `${user.mobileNumber} - `;
+    }
+    if (user.address.city) {
+      address = `${address}${user.address.city}`;
+    }
+    if (user.address.pinCode) {
+      address = `${address}${user.address.pinCode}`;
+    }
     console.log(address);
     this.setState({address});
   };
@@ -345,7 +356,7 @@ export class Dashboard extends Component {
   onSearchPress = () => {
     const {searchText, categories} = this.state;
     const {navigation} = this.props;
-    if (!!searchText) {
+    if (searchText) {
       navigation.navigate(NavigationRoutes.Products, {
         comeFrom: 'Search',
         searchText: searchText,
@@ -382,10 +393,9 @@ export class Dashboard extends Component {
               backgroundColor: colors.white,
               paddingTop: 20,
               paddingHorizontal: 10,
-              // padding:50
             }}>
             {showLoader && <ActivityLoader showLoader={showLoader} />}
-            {!!address && (
+            {/* {!!address && (
               <View
                 style={{
                   flexDirection: 'row',
@@ -401,14 +411,13 @@ export class Dashboard extends Component {
                 />
                 <Text>Deliver to {address}</Text>
               </View>
-            )}
+            )} */}
             <View
               style={{
                 width: '100%',
                 flexDirection: 'row',
                 justifyContent: 'flex-start',
                 alignItems: 'center',
-                // paddingHorizontal: 20,
                 backgroundColor: '#ffffff',
                 marginVertical: 10,
                 shadowColor: '#000000',
@@ -547,22 +556,35 @@ export class Dashboard extends Component {
                           shadowColor: '#000000',
                           elevation: 10,
                         }}>
-                        <Image
-                          // source={{
-                          //   uri: 'https://www.mickeyparts.com/pages/media/Are-You-Planning-To-Run-A-Small-Beverage-Business.jpeg',
-                          // }}
-                          source={{uri: item.images[0]}}
-                          resizeMode="stretch"
-                          style={{
-                            height: 90,
-                            width: 90,
-                            alignSelf: 'center',
-                            borderRadius: 45,
-                            backgroundColor: colors.white,
-                            shadowColor: '#000000',
-                            elevation: 10,
-                          }}
-                        />
+                        {item?.images[0] ? (
+                          <Image
+                            // source={{
+                            //   uri: 'https://www.mickeyparts.com/pages/media/Are-You-Planning-To-Run-A-Small-Beverage-Business.jpeg',
+                            // }}
+                            source={{uri: item.images[0]}}
+                            resizeMode="stretch"
+                            style={{
+                              height: 90,
+                              width: 90,
+                              alignSelf: 'center',
+                              borderRadius: 45,
+                              backgroundColor: colors.white,
+                              shadowColor: '#000000',
+                              elevation: 10,
+                            }}
+                          />
+                        ) : (
+                          <Image
+                            source={images?.no_image}
+                            style={{
+                              height: 100,
+                              width: 100,
+                              justifyContent: 'center',
+                              alignSelf: 'center',
+                            }}
+                            resizeMode="contain"
+                          />
+                        )}
                         <Text
                           style={{
                             fontSize: 15,

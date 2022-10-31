@@ -1,3 +1,4 @@
+/* eslint-disable react-native/no-inline-styles */
 import {FlatList, Image, Text, View} from 'react-native';
 import React, {Component} from 'react';
 import {styles} from './styles';
@@ -74,12 +75,18 @@ export class Wishlist extends Component {
             flexDirection: 'row',
             borderWidth: 1,
             borderColor: colors.white,
-            padding: 10,
             marginVertical: 5,
-            borderRadius: 5,
+            borderRadius: 20,
+            shadowColor: '#000000',
+            borderColor: colors.prime,
           }}>
           <View
-            style={{flex: 1, justifyContent: 'center', alignItems: 'center'}}>
+            style={{
+              flex: 1,
+              justifyContent: 'center',
+              alignItems: 'center',
+              borderRadius: 20,
+            }}>
             <Image
               source={{uri: item.productList[0].images[0]}}
               style={{height: 100, width: 100}}
@@ -98,7 +105,7 @@ export class Wishlist extends Component {
                   flexDirection: 'row',
                   backgroundColor: colors.prime,
                   borderRadius: 5,
-                  padding: 5,
+                  // padding: 5,
                   justifyContent: 'center',
                   alignItems: 'center',
                 }}>
@@ -119,20 +126,20 @@ export class Wishlist extends Component {
               <Text
                 style={{
                   fontSize: 15,
-                  color: colors.white,
+                  color: colors.black,
                   fontWeight: '800',
                   marginLeft: 5,
                 }}>{`${item.productList[0].rating} Rating & 10 Reviews`}</Text>
             </View>
             {item.productList[0].description &&
               item.productList[0].description != 'undefined' && (
-                <Text style={{fontSize: 12, color: colors.white}}>
+                <Text style={{fontSize: 12, color: colors.gray}}>
                   {item.productList[0].description}
                 </Text>
               )}
             <View style={{flexDirection: 'row', alignItems: 'baseline'}}>
               <Text
-                style={{fontSize: 20, fontWeight: 'bold', color: colors.white}}>
+                style={{fontSize: 20, fontWeight: 'bold', color: colors.gray}}>
                 &#8377; {item.productList[0].price}
               </Text>
               <Text
@@ -178,7 +185,7 @@ export class Wishlist extends Component {
             paddingTop: 20,
             backgroundColor: colors.white,
           }}>
-          <LinearGradient
+          {/* <LinearGradient
             colors={[colors.secondary, colors.prime]}
             start={{x: 0, y: 0}}
             end={{x: 0, y: 1}}
@@ -189,42 +196,42 @@ export class Wishlist extends Component {
               width: windowWidth,
               height: windowHeight,
               borderRadius: 40,
-            }}>
-            {showLoader && <ActivityLoader showLoader={showLoader} />}
-            {wishlist.length > 0 ? (
-              <FlatList
-                data={wishlist}
-                renderItem={this.renderItem}
-                keyExtractor={item => item._id}
-                extraData={item => item._id}
-                style={{flex: 1}}
-                contentContainerStyle={{
-                  // height: '100%',
-                  width: '100%',
-                  paddingHorizontal: 10,
-                  justifyContent: 'flex-start',
-                  alignItems: 'center',
-                  paddingVertical: 20,
-                }}
-              />
-            ) : (
-              <View
+            }}> */}
+          {showLoader && <ActivityLoader showLoader={showLoader} />}
+          {wishlist.length > 0 ? (
+            <FlatList
+              data={wishlist}
+              renderItem={this.renderItem}
+              keyExtractor={item => item._id}
+              extraData={item => item._id}
+              style={{flex: 1}}
+              contentContainerStyle={{
+                // height: '100%',
+                width: '100%',
+                // paddingHorizontal: 10,
+                justifyContent: 'flex-start',
+                alignItems: 'center',
+                // paddingVertical: 20,
+              }}
+            />
+          ) : (
+            <View
+              style={{
+                flex: 1,
+                justifyContent: 'center',
+                alignItems: 'center',
+              }}>
+              <Text
                 style={{
-                  flex: 1,
-                  justifyContent: 'center',
-                  alignItems: 'center',
+                  fontSize: 24,
+                  fontWeight: 'bold',
+                  color: colors.white + 90,
                 }}>
-                <Text
-                  style={{
-                    fontSize: 24,
-                    fontWeight: 'bold',
-                    color: colors.white + 90,
-                  }}>
-                  Product Not Found
-                </Text>
-              </View>
-            )}
-          </LinearGradient>
+                Product Not Found
+              </Text>
+            </View>
+          )}
+          {/* </LinearGradient> */}
         </View>
       </LinearGradient>
     );

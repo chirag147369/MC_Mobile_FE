@@ -48,11 +48,13 @@ export default class Orders extends Component {
       showLoader => this.setState({showLoader}),
       true,
       async response => {
-        if (response.message == 'Not Orders Found!')
+        if (response.message == 'Not Orders Found!') {
           this.setState({orders: []});
-        else if (response.message == 'Order successfull found!')
+        } else if (response.message == 'Order successfull found!') {
           this.setState({orders: [...response.result]});
-        else this.setState({orders: null});
+        } else {
+          this.setState({orders: null});
+        }
       },
     );
   };
@@ -75,12 +77,14 @@ export default class Orders extends Component {
       true,
       async response => {
         console.log(response, 'from on Press cancel method');
-        if (response.message == 'Order successfull Placed!') this.getOrders();
-        else
+        if (response.message == 'Order successfull Placed!') {
+          this.getOrders();
+        } else {
           Alert.alert(
             'Order Alert',
             'Please check with admin something went wrong',
           );
+        }
       },
     );
   };
@@ -92,12 +96,14 @@ export default class Orders extends Component {
       showLoader => this.setState({showLoader}),
       true,
       async response => {
-        if (response.message == 'Order deleted successfully!') this.getOrders();
-        else
+        if (response.message == 'Order deleted successfully!') {
+          this.getOrders();
+        } else {
           Alert.alert(
             'Order Alert',
             'Please check with admin something went wrong',
           );
+        }
       },
     );
   };
@@ -113,7 +119,8 @@ export default class Orders extends Component {
           padding: 5,
           borderWidth: 1,
           borderRadius: 10,
-          borderColor: colors.white,
+          borderColor: colors.prime,
+          elevation: 5,
         }}>
         <View style={{marginLeft: 20, alignSelf: 'flex-start'}}>
           <View
@@ -126,7 +133,7 @@ export default class Orders extends Component {
               style={{
                 fontSize: 18,
                 fontWeight: '800',
-                color: colors.white,
+                color: colors.secondaryColor,
               }}>
               {`Order no.:${index + 1}`}
             </Text>
@@ -134,7 +141,7 @@ export default class Orders extends Component {
               style={{
                 padding: 5,
                 borderRadius: 5,
-                backgroundColor: colors.red,
+                backgroundColor: colors.prime,
               }}
               onPress={() => this.onPressCancel(item)}>
               <Text
@@ -143,36 +150,36 @@ export default class Orders extends Component {
               </Text>
             </TouchableOpacity>
           </View>
-          <Text style={{fontSize: 15, fontWeight: '500', color: colors.white}}>
-            {`Total No. of Products: `}
+          <Text style={{fontSize: 15, fontWeight: '500', color: colors.secondary}}>
+            {'Total No. of Products: '}
             {item.products.length}
           </Text>
-          <Text style={{fontSize: 15, fontWeight: '500', color: colors.white}}>
-            {`Total quantity: `}
+          <Text style={{fontSize: 15, fontWeight: '500', color: colors.secondary}}>
+            {'Total quantity: '}
             {item.quantity}
           </Text>
-          <Text style={{fontSize: 15, fontWeight: '500', color: colors.white}}>
-            {`Order amount: `}&#8377;{item.amount}
+          <Text style={{fontSize: 15, fontWeight: '500', color: colors.secondary}}>
+            {'Order amount: '}&#8377;{item.amount}
           </Text>
-          <Text style={{fontSize: 15, fontWeight: '500', color: colors.white}}>
-            {`Payment Method: `}
+          <Text style={{fontSize: 15, fontWeight: '500', color: colors.secondary}}>
+            {'Payment Method: '}
             {item.paymentMethod == 'COD' ? 'Cash On Delivery' : 'COD'}
           </Text>
-          <Text style={{fontSize: 15, fontWeight: '500', color: colors.white}}>
-            {`Payment Status: `}
+          <Text style={{fontSize: 15, fontWeight: '500', color: colors.secondary}}>
+            {'Payment Status: '}
             {item.paymentStatus ? 'Done' : 'Pending'}
           </Text>
-          <Text style={{fontSize: 15, fontWeight: '500', color: colors.white}}>
-            {`Delivery Address: `}
+          <Text style={{fontSize: 15, fontWeight: '500', color: colors.secondary}}>
+            {'Delivery Address: '}
             {item.deliveryAddress}
           </Text>
           <Text
             style={{
               fontSize: 15,
               fontWeight: '500',
-              color: colors.white,
+              color: colors.secondary,
             }}>
-            {`Delivery Status: `}
+            {'Delivery Status: '}
             <Text
               style={{
                 fontSize: 15,
@@ -218,7 +225,7 @@ export default class Orders extends Component {
             borderTopLeftRadius: 40,
             paddingTop: 20,
           }}>
-          <LinearGradient
+          {/* <LinearGradient
             colors={[colors.secondary, colors.prime]}
             start={{x: 0, y: 0}}
             end={{x: 0, y: 1}}
@@ -228,55 +235,55 @@ export default class Orders extends Component {
               justifyContent: 'center',
               alignItems: 'center',
               borderRadius: 40,
-            }}>
-            {showLoader && <ActivityLoader showLoader={showLoader} />}
-            {orders?.length <= 0 ? (
-              <View
+            }}> */}
+          {showLoader && <ActivityLoader showLoader={showLoader} />}
+          {orders?.length <= 0 ? (
+            <View
+              style={{
+                flex: 1,
+                justifyContent: 'center',
+                alignItems: 'center',
+              }}>
+              <TouchableOpacity
                 style={{
-                  flex: 1,
+                  padding: 10,
                   justifyContent: 'center',
                   alignItems: 'center',
-                }}>
-                <TouchableOpacity
-                  style={{
-                    padding: 10,
-                    justifyContent: 'center',
-                    alignItems: 'center',
-                    borderWidth: 2,
-                    borderRadius: 10,
-                    borderColor: colors.white,
-                  }}
-                  onPress={() =>
-                    this.props.navigation.navigate(NavigationRoutes.Categories)
-                  }>
-                  <Text
-                    style={{
-                      fontSize: 15,
-                      fontWeight: 'bold',
-                      color: colors.white,
-                    }}>
-                    Please make your first order
-                  </Text>
-                </TouchableOpacity>
-              </View>
-            ) : (
-              <FlatList
-                data={orders}
-                renderItem={this.renderItem}
-                keyExtractor={item => item._id}
-                extraData={item => item._id}
-                style={{flex: 1}}
-                contentContainerStyle={{
-                  // height: '100%',
-                  width: '100%',
-                  paddingHorizontal: 10,
-                  justifyContent: 'flex-start',
-                  alignItems: 'center',
-                  paddingVertical: 20,
+                  borderWidth: 2,
+                  borderRadius: 10,
+                  borderColor: colors.prime,
                 }}
-              />
-            )}
-          </LinearGradient>
+                onPress={() =>
+                  this.props.navigation.navigate(NavigationRoutes.Categories)
+                }>
+                <Text
+                  style={{
+                    fontSize: 15,
+                    fontWeight: 'bold',
+                    color: colors.prime,
+                  }}>
+                  Please make your first order
+                </Text>
+              </TouchableOpacity>
+            </View>
+          ) : (
+            <FlatList
+              data={orders}
+              renderItem={this.renderItem}
+              keyExtractor={item => item._id}
+              extraData={item => item._id}
+              style={{flex: 1}}
+              contentContainerStyle={{
+                // height: '100%',
+                width: '100%',
+                paddingHorizontal: 10,
+                justifyContent: 'flex-start',
+                alignItems: 'center',
+                paddingVertical: 20,
+              }}
+            />
+          )}
+          {/* </LinearGradient> */}
         </View>
       </LinearGradient>
     );

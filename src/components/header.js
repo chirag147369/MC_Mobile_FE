@@ -1,6 +1,8 @@
+/* eslint-disable react-native/no-inline-styles */
 import React, {useEffect, useState} from 'react';
 import Icon from 'react-native-vector-icons/Ionicons';
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
+import AntDesign from 'react-native-vector-icons/AntDesign';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import FontAwesome from 'react-native-vector-icons/FontAwesome';
 import {
@@ -10,6 +12,7 @@ import {
   View,
   TouchableOpacity,
   ScrollView,
+  Linking,
 } from 'react-native';
 
 import colors from '../utility/colors';
@@ -126,11 +129,30 @@ export const Header = props => {
   };
 
   const getUserProfileTitle = () => {
-    if (user.firstName && user.lastName)
+    if (user.firstName && user.lastName) {
       return `${user.firstName} ${user.lastName}`;
-    else if (user.firstName) return `${user.firstName}`;
-    else if (user.lastName) return `${user.lastName}`;
-    else return `${user.mobileNumber}`;
+    } else if (user.firstName) {
+      return `${user.firstName}`;
+    } else if (user.lastName) {
+      return `${user.lastName}`;
+    } else {
+      return `${user.mobileNumber}`;
+    }
+  };
+
+  const openFacebook = () => {
+    const url = 'https://www.facebook.com/marketconvenience';
+    Linking.openURL(url);
+  };
+
+  const openInstagram = () => {
+    const url = 'https://www.instagram.com/marketconvenience?r=nametag';
+    Linking.openURL(url);
+  };
+
+  const openTwitter = () => {
+    const url = 'https://www.instagram.com/marketconvenience?r=nametag';
+    Linking.openURL(url);
   };
 
   getUser();
@@ -174,7 +196,7 @@ export const Header = props => {
                     styles.menuText,
                     {color: colors.secondary, fontWeight: 'bold'},
                   ]}>
-                  {!!user ? getUserProfileTitle().toString() : 'Market'}
+                  {user ? getUserProfileTitle().toString() : 'Market'}
                 </Text>
                 <FontAwesome
                   name="pencil-square-o"
@@ -188,7 +210,7 @@ export const Header = props => {
                   styles.menuText,
                   {color: colors.white + 70, fontSize: 12},
                 ]}>
-                {!!user ? user.mobileNumber : 'Convenience'}
+                {user ? user.mobileNumber : 'Convenience'}
               </Text>
             </TouchableOpacity>
           </View>
@@ -231,32 +253,60 @@ export const Header = props => {
               ))}
         </View>
         {user ? (
-          <TouchableOpacity
-            style={styles.logoutButtonStyle}
-            onPress={onPressLogout}>
-            <LinearGradient
-              colors={[colors.prime, colors.secondary]}
-              start={{x: 0, y: 0}}
-              end={{x: 0, y: 1}}
-              style={{
-                width: '100%',
-                paddingHorizontal: 20,
-                paddingVertical: 20,
-                flexDirection: 'row',
-                justifyContent: 'flex-start',
-                alignItems: 'center',
-              }}>
-              <MaterialIcons
-                name="logout"
-                size={20}
-                color={colors.secondary}
-                style={{fontWeight: 'bold'}}
-              />
-              <Text style={[styles.menuText, {color: colors.secondary + 90}]}>
-                Logout
-              </Text>
-            </LinearGradient>
-          </TouchableOpacity>
+          <View>
+            <View style={styles.socialMedia}>
+              <TouchableOpacity onPress={openFacebook}>
+                <MaterialIcons
+                  name="facebook"
+                  size={35}
+                  color={colors.secondary}
+                  style={{fontWeight: 'bold'}}
+                />
+              </TouchableOpacity>
+              <TouchableOpacity onPress={openInstagram}>
+                <AntDesign
+                  name="instagram"
+                  size={30}
+                  color={colors.secondary}
+                  style={{fontWeight: 'bold'}}
+                />
+              </TouchableOpacity>
+              <TouchableOpacity onPress={openTwitter}>
+                <AntDesign
+                  name="twitter"
+                  size={30}
+                  color={colors.secondary}
+                  style={{fontWeight: 'bold'}}
+                />
+              </TouchableOpacity>
+            </View>
+            <TouchableOpacity
+              style={styles.logoutButtonStyle}
+              onPress={onPressLogout}>
+              <LinearGradient
+                colors={[colors.prime, colors.secondary]}
+                start={{x: 0, y: 0}}
+                end={{x: 0, y: 1}}
+                style={{
+                  width: '100%',
+                  paddingHorizontal: 20,
+                  paddingVertical: 20,
+                  flexDirection: 'row',
+                  justifyContent: 'flex-start',
+                  alignItems: 'center',
+                }}>
+                <MaterialIcons
+                  name="logout"
+                  size={20}
+                  color={colors.secondary}
+                  style={{fontWeight: 'bold'}}
+                />
+                <Text style={[styles.menuText, {color: colors.secondary + 90}]}>
+                  Logout
+                </Text>
+              </LinearGradient>
+            </TouchableOpacity>
+          </View>
         ) : (
           <TouchableOpacity
             style={styles.logoutButtonStyle}
@@ -319,6 +369,16 @@ const styles = StyleSheet.create({
     bottom: 0,
     right: 0,
     left: 0,
+  },
+  socialMedia: {
+    // borderTopWidth: 1,
+    // borderColor: colors.secondary,
+    // position: 'absolute',
+    bottom: 80,
+    // right: 0,
+    // left: 20,
+    flexDirection: 'row',
+    justifyContent: 'space-evenly',
   },
   menuText: {
     marginLeft: 20,

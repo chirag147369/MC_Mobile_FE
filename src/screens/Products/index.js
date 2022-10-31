@@ -1,3 +1,4 @@
+/* eslint-disable react-native/no-inline-styles */
 import React, {Component} from 'react';
 import {
   View,
@@ -11,6 +12,7 @@ import {TouchableOpacity} from 'react-native-gesture-handler';
 import LinearGradient from 'react-native-linear-gradient';
 import {color} from 'react-native-reanimated';
 import Icon from 'react-native-vector-icons/MaterialIcons';
+import {images} from '../../assests/images/images';
 import ActivityLoader from '../../components/ActivityLoader';
 import MyButton from '../../components/Button';
 import {HeaderBar} from '../../components/HeaderBar';
@@ -48,8 +50,11 @@ export class Products extends Component {
         />
       ),
     });
-    if (!comeFrom) this.getProducts();
-    else this.getSearchProduct();
+    if (!comeFrom) {
+      this.getProducts();
+    } else {
+      this.getSearchProduct();
+    }
   }
 
   getSearchProduct = async () => {
@@ -113,11 +118,20 @@ export class Products extends Component {
             justifyContent: 'center',
             alignItems: 'center',
           }}>
-          <Image
-            source={{uri: item.images[0]}}
-            style={{height: 100, width: 100}}
-            resizeMode="contain"
-          />
+          {console.log(item?.images[0])}
+          {item?.images[0] ? (
+            <Image
+              source={{uri: item.images[0]}}
+              style={{height: 100, width: 100}}
+              resizeMode="contain"
+            />
+          ) : (
+            <Image
+              source={images?.no_image}
+              style={{height: 100, width: 90}}
+              resizeMode="contain"
+            />
+          )}
         </View>
         <View style={{flex: 2}}>
           <Text

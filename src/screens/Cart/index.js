@@ -21,6 +21,7 @@ import MyTextInput from '../../components/TextInput';
 import MyButton from '../../components/Button';
 import {keyboardType} from '../../utility/types';
 import {en} from '../../localization/english';
+import RazorpayCheckout from 'react-native-razorpay';
 
 export default class Cart extends Component {
   constructor(props) {
@@ -65,7 +66,7 @@ export default class Cart extends Component {
       true,
       async response => {
         console.log(response, 'from get Cart items');
-        if (response.message != 'Your cart is empty!')
+        if (response.message != 'Your cart is empty!') {
           this.setState(
             {
               cart: response.result[0].cartItemsList,
@@ -73,7 +74,9 @@ export default class Cart extends Component {
             },
             () => this.calculateTotal(),
           );
-        else Alert.alert('Cart Alert', response.message);
+        } else {
+          Alert.alert('Cart Alert', response.message);
+        }
       },
     );
   };
@@ -86,7 +89,7 @@ export default class Cart extends Component {
       showLoader => this.setState({showLoader}),
       true,
       async response => {
-        if (response.result[0]?.cartItemsList.length > 0)
+        if (response.result[0]?.cartItemsList.length > 0) {
           this.setState(
             {
               cart: response.result[0].cartItemsList,
@@ -94,7 +97,9 @@ export default class Cart extends Component {
             },
             () => this.calculateTotal(),
           );
-        else Alert.alert('Cart Alert', response.message);
+        } else {
+          Alert.alert('Cart Alert', response.message);
+        }
       },
     );
   };
@@ -108,7 +113,7 @@ export default class Cart extends Component {
       showLoader => this.setState({showLoader}),
       true,
       async response => {
-        if (response.result[0]?.cartItemsList.length > 0)
+        if (response.result[0]?.cartItemsList.length > 0) {
           this.setState(
             {
               cart: response.result[0].cartItemsList,
@@ -116,7 +121,9 @@ export default class Cart extends Component {
             },
             () => this.calculateTotal(),
           );
-        else Alert.alert('Cart Alert', response.message);
+        } else {
+          Alert.alert('Cart Alert', response.message);
+        }
       },
     );
   };
@@ -132,11 +139,13 @@ export default class Cart extends Component {
       showLoader => this.setState({showLoader}),
       true,
       response => {
-        if (response.result[0]?.cartItemsList.length > 0)
+        if (response.result[0]?.cartItemsList.length > 0) {
           this.setState({cart: response.result[0].cartItemsList}, () =>
             this.calculateTotal(),
           );
-        else this.setState({cart: []}, () => this.calculateTotal());
+        } else {
+          this.setState({cart: []}, () => this.calculateTotal());
+        }
       },
     );
   };
@@ -304,6 +313,7 @@ export default class Cart extends Component {
 
   getPendingStatusID = async () => {
     const status = await getPendingStatus();
+    console.log(status);
     return await status.find(status => status.title == 'Pending')._id;
   };
 
@@ -324,6 +334,25 @@ export default class Cart extends Component {
       );
       return;
     }
+
+    Alert.alert('Order alert', 'Please Select Mode Of Payment', [
+      {
+        text: 'COD',
+        onPress: () => {
+          this.cod();
+        },
+      },
+      {
+        text: 'Online',
+        onPress: () => {
+          this.online();
+        },
+      },
+    ]);
+  };
+  cod = async () => {
+    const user = await getUser();
+    const {total, totalQuantity, cartItemsForOrder} = this.state;
     const payload = {
       userID: user.userID,
       deliveryStatus: await this.getPendingStatusID(),
@@ -336,7 +365,6 @@ export default class Cart extends Component {
         return {id: product._id, quantity: product.quantity};
       }),
     };
-
     http.post(
       urls.createOrder,
       payload,
@@ -360,7 +388,67 @@ export default class Cart extends Component {
       },
     );
   };
+  online = async () => {
+    const user = await getUser();
+    const {total, totalQuantity, cartItemsForOrder} = this.state;
+    const payload = {
+      userID: user.userID,
+      deliveryStatus: await this.getPendingStatusID(),
+      paymentStatus: false,
+      paymentMethod: 'COD',
+      quantity: totalQuantity,
+      amount: this.getTotalAmount().toFixed(2),
+      deliveryAddress: `${user?.address?.houseNo} ${user?.address?.area} ${user?.address?.city} ${user?.address?.state} ${user?.address?.country} Pincode: ${user?.address?.pinCode}`,
+      products: cartItemsForOrder.map(product => {
+        return {id: product._id, quantity: product.quantity};
+      }),
+    };
+    http.post(
+      urls.createOrder,
+      payload,
+      showLoader => this.setState({showLoader}),
+      true,
+      response => {
+        console.log(response, 'from order place api');
+        if (response.success != false) {
+          // Alert.alert('Order alert', 'Your order placed successfully.', [
+          //   {
+          // text: 'OK',
+          // onPress: () => {
 
+          var options = {
+            description: 'Credits towards consultation',
+            image: 'https://i.imgur.com/3g7nmJC.png',
+            currency: 'INR',
+            key: '', // Your api key
+            amount: '5000',
+            name: 'foo',
+            prefill: {
+              email: 'void@razorpay.com',
+              contact: '9191919191',
+              name: 'Razorpay Software',
+            },
+            theme: {color: '#F37254'},
+          };
+          RazorpayCheckout.open(options)
+            .then(data => {
+              // handle success
+              this.clearCart();
+              alert(`Success: ${data.razorpay_payment_id}`);
+            })
+            .catch(error => {
+              // handle failure
+              alert(`Error: ${error.code} | ${error.description}`);
+            });
+          // },
+          //   },
+          // ]);
+        } else {
+          Alert.alert('Order Alert', 'Something went wrong');
+        }
+      },
+    );
+  };
   clearCart = async () => {
     const user = await getUser();
     http.get(
@@ -408,29 +496,36 @@ export default class Cart extends Component {
         if (response.message == 'Coupons Applied successfully!') {
           this.setState({appliedCouponObject: response.result[0]});
           Alert.alert('Coupon Alert', 'Coupon code applied');
-        } else
+        } else {
           Alert.alert(
             'Coupon Alert',
             'Coupon code does not valid, Please enter valid coupon code',
           );
+        }
       },
     );
   };
 
   getTotalAmount = () => {
     const {appliedCouponObject, total} = this.state;
-    if (!!appliedCouponObject && appliedCouponObject?.isPercent)
+    if (!!appliedCouponObject && appliedCouponObject?.isPercent) {
       return total - (total * appliedCouponObject.amount) / 100;
-    else if (!!appliedCouponObject) return total - appliedCouponObject.amount;
-    else return total;
+    } else if (appliedCouponObject) {
+      return total - appliedCouponObject.amount;
+    } else {
+      return total;
+    }
   };
 
   getDiscountAmount = () => {
     const {appliedCouponObject, total} = this.state;
-    if (!!appliedCouponObject && appliedCouponObject?.isPercent)
+    if (!!appliedCouponObject && appliedCouponObject?.isPercent) {
       return (total * appliedCouponObject.amount) / 100;
-    else if (!!appliedCouponObject) return appliedCouponObject.amount;
-    else return 0;
+    } else if (appliedCouponObject) {
+      return appliedCouponObject.amount;
+    } else {
+      return 0;
+    }
   };
 
   render() {
@@ -455,7 +550,7 @@ export default class Cart extends Component {
             paddingTop: 20,
             backgroundColor: colors.white,
           }}>
-          <LinearGradient
+          {/* <LinearGradient
             colors={[colors.secondary, colors.prime]}
             start={{x: 0, y: 0}}
             end={{x: 0, y: 1}}
@@ -465,208 +560,216 @@ export default class Cart extends Component {
               justifyContent: 'center',
               alignItems: 'center',
               borderRadius: 40,
-            }}>
-            {!!cartItemsForOrder && cartItemsForOrder.length > 0 ? (
-              <ScrollView style={{width: windowWidth, marginBottom: 60}}>
-                <FlatList
-                  data={cartItemsForOrder}
-                  renderItem={this.renderItem}
-                  keyExtractor={item => item._id}
-                  extraData={item => item._id}
-                  style={{flex: 1}}
-                  contentContainerStyle={{
-                    // height: '100%',
+            }}> */}
+          {!!cartItemsForOrder && cartItemsForOrder.length > 0 ? (
+            <ScrollView style={{width: windowWidth, marginBottom: 60}}>
+              <FlatList
+                data={cartItemsForOrder}
+                renderItem={this.renderItem}
+                keyExtractor={item => item._id}
+                extraData={item => item._id}
+                style={{flex: 1}}
+                contentContainerStyle={{
+                  // height: '100%',
+                  width: '100%',
+                  // paddingHorizontal: 10,
+                  justifyContent: 'flex-start',
+                  alignItems: 'center',
+                  // paddingBottom: 60,
+                }}
+              />
+              <View
+                style={{
+                  backgroundColor: colors.white,
+                  borderTopWidth: 1,
+                  borderBottomWidth: 1,
+                  borderColor: colors.secondary,
+                }}>
+                <Text
+                  style={{
+                    fontSize: 20,
+                    fontWeight: 'bold',
+                    color: colors.secondary + 90,
+                    marginLeft: (windowWidth * 3) / 100,
+                    marginVertical: 5,
+                  }}>
+                  Coupon Code
+                </Text>
+                <View
+                  style={{
                     width: '100%',
-                    // paddingHorizontal: 10,
-                    justifyContent: 'flex-start',
+                    flexDirection: 'row',
                     alignItems: 'center',
-                    // paddingBottom: 60,
-                  }}
-                />
-                <View
-                  style={{
                     backgroundColor: colors.white,
-                    borderTopWidth: 1,
                     borderBottomWidth: 1,
-                    borderColor: colors.secondary,
+                    borderBottomColor: colors.prime,
                   }}>
-                  <Text
-                    style={{
-                      fontSize: 20,
+                  <MyTextInput
+                    title="Coupon Code"
+                    titleStyle={{
+                      fontSize: 12,
                       fontWeight: 'bold',
-                      color: colors.secondary + 90,
-                      marginLeft: (windowWidth * 3) / 100,
-                      marginVertical: 5,
-                    }}>
-                    Coupon Code
-                  </Text>
-                  <View
-                    style={{
-                      width: '100%',
-                      flexDirection: 'row',
-                      alignItems: 'center',
-                      backgroundColor: colors.white,
-                      borderBottomWidth: 1,
-                      borderBottomColor: colors.prime,
-                    }}>
-                    <MyTextInput
-                      title="Coupon Code"
-                      titleStyle={{
-                        fontSize: 12,
-                        fontWeight: 'bold',
-                        color: colors.gray + 90,
-                      }}
-                      value={couponCode}
-                      keyboardType={keyboardType.default}
-                      textInputStyle={{
-                        fontWeight: 'bold',
-                        color: colors.gray + 90,
-                      }}
-                      placeholder={en.coupon_code_placeholder}
-                      onChangeTextInput={couponCode =>
-                        this.setState({couponCode})
-                      }
-                      disabledTitle={true}
-                      textInputViewStyle={{width: '75%'}}
-                    />
-                    <MyButton
-                      title="Apply"
-                      onPressButton={this.onApplyPress}
-                      buttonStyle={{width: '100%', marginVertical: 5}}
-                    />
-                  </View>
+                      color: colors.gray + 90,
+                    }}
+                    value={couponCode}
+                    keyboardType={keyboardType.default}
+                    textInputStyle={{
+                      fontWeight: 'bold',
+                      color: colors.gray + 90,
+                    }}
+                    placeholder={en.coupon_code_placeholder}
+                    onChangeTextInput={couponCode =>
+                      this.setState({couponCode})
+                    }
+                    disabledTitle={true}
+                    textInputViewStyle={{width: '75%'}}
+                  />
+                  <MyButton
+                    title="Apply"
+                    onPressButton={this.onApplyPress}
+                    buttonStyle={{width: '100%', marginVertical: 5}}
+                  />
                 </View>
+              </View>
+              <View
+                style={{
+                  justifyContent: 'center',
+                  // alignItems: 'center',
+                }}>
+                <Text
+                  style={{
+                    fontSize: 20,
+                    fontWeight: 'bold',
+                    color: colors.secondary + 90,
+                    marginLeft: (windowWidth * 3) / 100,
+                    marginVertical: 5,
+                  }}>
+                  Price Details
+                </Text>
                 <View
                   style={{
-                    justifyContent: 'center',
-                    // alignItems: 'center',
-                  }}>
-                  <Text
-                    style={{
-                      fontSize: 20,
-                      fontWeight: 'bold',
-                      color: colors.secondary + 90,
-                      marginLeft: (windowWidth * 3) / 100,
-                      marginVertical: 5,
-                    }}>
-                    Price Details
-                  </Text>
-                  <View
-                    style={{
-                      flexDirection: 'row',
-                      alignItems: 'center',
-                      justifyContent: 'space-between',
-                      marginHorizontal: (windowWidth * 3) / 100,
-                    }}>
-                    <Text
-                      style={{
-                        fontSize: 18,
-                        fontWeight: '600',
-                        color: colors.prime,
-                      }}>
-                      Total mrp of ({cartItemsForOrder.length}) products{' '}
-                    </Text>
-                    <Text
-                      style={{
-                        fontSize: 18,
-                        fontWeight: '600',
-                        color: colors.prime,
-                      }}>
-                      &#8377;{total.toFixed(2)}
-                    </Text>
-                  </View>
-                  <View
-                    style={{
-                      flexDirection: 'row',
-                      alignItems: 'center',
-                      justifyContent: 'space-between',
-                      marginHorizontal: (windowWidth * 3) / 100,
-                      borderBottomWidth: 1,
-                      borderColor: colors.secondary + 90,
-                      paddingBottom: 5,
-                    }}>
-                    <Text
-                      style={{
-                        fontSize: 18,
-                        fontWeight: '600',
-                        color: colors.prime,
-                      }}>
-                      Discount
-                    </Text>
-                    <Text
-                      style={{
-                        fontSize: 18,
-                        fontWeight: '600',
-                        color: colors.cancelStatusColor,
-                      }}>
-                      &#8377;{this.getDiscountAmount().toFixed(2)}
-                    </Text>
-                  </View>
-                  <View
-                    style={{
-                      flexDirection: 'row',
-                      alignItems: 'center',
-                      justifyContent: 'space-between',
-                      marginHorizontal: (windowWidth * 3) / 100,
-                      borderBottomWidth: 1,
-                      borderColor: colors.secondary + 90,
-                      paddingBottom: 5,
-                    }}>
-                    <Text
-                      style={{
-                        fontSize: 18,
-                        fontWeight: '600',
-                        color: colors.prime,
-                      }}>
-                      Total Amount
-                    </Text>
-                    <Text
-                      style={{
-                        fontSize: 18,
-                        fontWeight: '600',
-                        color: colors.prime,
-                      }}>
-                      &#8377;
-                      {(
-                        total.toFixed(2) - this.getDiscountAmount().toFixed(2)
-                      ).toFixed(2)}
-                    </Text>
-                  </View>
-                </View>
-              </ScrollView>
-            ) : (
-              !!cartItemsForOrder && (
-                <View
-                  style={{
-                    flex: 1,
-                    justifyContent: 'center',
+                    flexDirection: 'row',
                     alignItems: 'center',
+                    justifyContent: 'space-between',
+                    marginHorizontal: (windowWidth * 3) / 100,
                   }}>
                   <Text
                     style={{
                       fontSize: 18,
-                      fontWeight: 'bold',
-                      color: colors.white,
+                      fontWeight: '600',
+                      color: colors.prime,
                     }}>
-                    Product not found
+                    Total mrp of ({cartItemsForOrder.length}) products{' '}
+                  </Text>
+                  <Text
+                    style={{
+                      fontSize: 18,
+                      fontWeight: '600',
+                      color: colors.prime,
+                    }}>
+                    &#8377;{total.toFixed(2)}
                   </Text>
                 </View>
-              )
-            )}
-          </LinearGradient>
+                <View
+                  style={{
+                    flexDirection: 'row',
+                    alignItems: 'center',
+                    justifyContent: 'space-between',
+                    marginHorizontal: (windowWidth * 3) / 100,
+                    borderBottomWidth: 1,
+                    borderColor: colors.secondary + 90,
+                    paddingBottom: 5,
+                  }}>
+                  <Text
+                    style={{
+                      fontSize: 18,
+                      fontWeight: '600',
+                      color: colors.prime,
+                    }}>
+                    Discount
+                  </Text>
+                  <Text
+                    style={{
+                      fontSize: 18,
+                      fontWeight: '600',
+                      color: colors.cancelStatusColor,
+                    }}>
+                    &#8377;{this.getDiscountAmount().toFixed(2)}
+                  </Text>
+                </View>
+                <View
+                  style={{
+                    flexDirection: 'row',
+                    alignItems: 'center',
+                    justifyContent: 'space-between',
+                    marginHorizontal: (windowWidth * 3) / 100,
+                    borderBottomWidth: 1,
+                    borderColor: colors.secondary + 90,
+                    paddingBottom: 5,
+                  }}>
+                  <Text
+                    style={{
+                      fontSize: 18,
+                      fontWeight: '600',
+                      color: colors.prime,
+                    }}>
+                    Total Amount
+                  </Text>
+                  <Text
+                    style={{
+                      fontSize: 18,
+                      fontWeight: '600',
+                      color: colors.prime,
+                    }}>
+                    &#8377;
+                    {(
+                      total.toFixed(2) - this.getDiscountAmount().toFixed(2)
+                    ).toFixed(2)}
+                  </Text>
+                </View>
+              </View>
+            </ScrollView>
+          ) : (
+            !!cartItemsForOrder && (
+              <View
+                style={{
+                  flex: 1,
+                  justifyContent: 'center',
+                  alignItems: 'center',
+                }}>
+                <Text
+                  style={{
+                    fontSize: 18,
+                    fontWeight: 'bold',
+                    color: colors.white,
+                  }}>
+                  Product not found
+                </Text>
+              </View>
+            )
+          )}
+          {/* </LinearGradient> */}
         </View>
         {cartItemsForOrder.length > 0 && (
-          <View
+          <LinearGradient
+            colors={[colors.prime, colors.secondary]}
+            start={{x: 0, y: 0}}
+            end={{x: 0, y: 1}}
             style={{
               flexDirection: 'row',
-              width: windowWidth,
+              width: windowWidth - 20,
               height: 60,
               position: 'absolute',
-              bottom: 0,
+              bottom: 5,
               justifyContent: 'space-between',
               alignItems: 'center',
               paddingHorizontal: 20,
+              left: 10,
+              right: 10,
               backgroundColor: 'white',
+              borderRadius: 20,
+              shadowColor: '#000000',
+              elevation: 10,
             }}>
             {cartItemsForOrder && (
               <View>
@@ -709,7 +812,7 @@ export default class Cart extends Component {
                 Place Order
               </Text>
             </TouchableOpacity>
-          </View>
+          </LinearGradient>
         )}
       </LinearGradient>
     );
