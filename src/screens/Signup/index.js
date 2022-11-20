@@ -69,17 +69,29 @@ export class Signup extends Component {
         Alert.alert('Registration', 'Registration inprogress');
       } else if (!firstName) {
         Alert.alert('Validation Alert', 'Enter first name');
-      } else if (!nameValidation.test(firstName)) {
-        Alert.alert('Validation Alert', 'First name should have only one word');
-      } else if (!lastName) {
+      }
+      // else if (!nameValidation.test(firstName)) {
+      //   Alert.alert(
+      //     'Validation Alert',
+      //     'First name should not have only one word',
+      //   );
+      // }
+      else if (!lastName) {
         Alert.alert('Validation Alert', 'Enter last name');
-      } else if (!nameValidation.test(lastName)) {
-        Alert.alert('Validation Alert', 'Last name should have only one word');
-      } else if (!email) {
+      }
+      // else if (!nameValidation.test(lastName)) {
+      //   Alert.alert(
+      //     'Validation Alert',
+      //     'Last name should not have only one word',
+      //   );
+      // }
+      else if (!email) {
         Alert.alert('Validation Alert', 'Enter email id');
-      } else if (!emailValidation.test(email)) {
-        Alert.alert('Validation Alert', 'Enter valid email id');
-      } else if (!mobileNumber) {
+      }
+      // else if (!emailValidation.test(email)) {
+      //   Alert.alert('Validation Alert', 'Enter valid email id');
+      // }
+      else if (!mobileNumber) {
         Alert.alert('Validation Alert', 'Enter mobile number');
       } else if (!mobileValidation.test(mobileNumber)) {
         Alert.alert('Validation Alert', 'Mobile number have only 10 digits');
@@ -120,10 +132,32 @@ export class Signup extends Component {
           toggleLoader,
           false,
           async response => {
-            navigation.navigate(NavigationRoutes.VerifyOtp, {
-              userID: response.userID,
-              OTP: response.OTP,
-            });
+            // navigation.navigate(NavigationRoutes.VerifyOtp, {
+            //   userID: response.userID,
+            //   OTP: response.OTP,
+            // }); If we want OTP Flow on Register just Uncomment that code and remove if and else condition below
+            if (response.OTP) {
+              const payload = {
+                OTP: 123456,
+              };
+              http.put(
+                urls.verifyUser + response.userID,
+                payload,
+                toggleLoader,
+                false,
+                async response => {
+                  Alert.alert('User Alert', 'User created successfully', [
+                    {
+                      text: 'OK',
+                      onPress: () =>
+                        navigation.navigate(NavigationRoutes.Login),
+                    },
+                  ]);
+                },
+              );
+            } else {
+              Alert.alert('Error', 'Please check internet connection');
+            }
           },
         );
       }
@@ -291,9 +325,11 @@ export class Signup extends Component {
                     if (
                       this.props.route?.params?.from !=
                       NavigationRoutes.ProductDetails
-                    )
+                    ) {
                       navigation.navigate(NavigationRoutes.Login);
-                    else navigation.pop();
+                    } else {
+                      navigation.pop();
+                    }
                   }}
                 />
               </View>

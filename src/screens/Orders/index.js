@@ -1,3 +1,4 @@
+/* eslint-disable react-native/no-inline-styles */
 import {Alert, FlatList, Image, SectionList, Text, View} from 'react-native';
 import React, {Component} from 'react';
 

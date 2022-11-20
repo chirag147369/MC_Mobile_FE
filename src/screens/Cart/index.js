@@ -389,65 +389,65 @@ export default class Cart extends Component {
     );
   };
   online = async () => {
-    const user = await getUser();
-    const {total, totalQuantity, cartItemsForOrder} = this.state;
-    const payload = {
-      userID: user.userID,
-      deliveryStatus: await this.getPendingStatusID(),
-      paymentStatus: false,
-      paymentMethod: 'COD',
-      quantity: totalQuantity,
-      amount: this.getTotalAmount().toFixed(2),
-      deliveryAddress: `${user?.address?.houseNo} ${user?.address?.area} ${user?.address?.city} ${user?.address?.state} ${user?.address?.country} Pincode: ${user?.address?.pinCode}`,
-      products: cartItemsForOrder.map(product => {
-        return {id: product._id, quantity: product.quantity};
-      }),
-    };
-    http.post(
-      urls.createOrder,
-      payload,
-      showLoader => this.setState({showLoader}),
-      true,
-      response => {
-        console.log(response, 'from order place api');
-        if (response.success != false) {
-          // Alert.alert('Order alert', 'Your order placed successfully.', [
-          //   {
-          // text: 'OK',
-          // onPress: () => {
+    // const user = await getUser();
+    // const {total, totalQuantity, cartItemsForOrder} = this.state;
+    // const payload = {
+    //   userID: user.userID,
+    //   deliveryStatus: await this.getPendingStatusID(),
+    //   paymentStatus: false,
+    //   paymentMethod: 'COD',
+    //   quantity: totalQuantity,
+    //   amount: this.getTotalAmount().toFixed(2),
+    //   deliveryAddress: `${user?.address?.houseNo} ${user?.address?.area} ${user?.address?.city} ${user?.address?.state} ${user?.address?.country} Pincode: ${user?.address?.pinCode}`,
+    //   products: cartItemsForOrder.map(product => {
+    //     return {id: product._id, quantity: product.quantity};
+    //   }),
+    // };
+    // http.post(
+    //   urls.createOrder,
+    //   payload,
+    //   showLoader => this.setState({showLoader}),
+    //   true,
+    //   response => {
+    //     console.log(response, 'from order place api');
+    //     if (response.success != false) {
+    // Alert.alert('Order alert', 'Your order placed successfully.', [
+    //   {
+    // text: 'OK',
+    // onPress: () => {
 
-          var options = {
-            description: 'Credits towards consultation',
-            image: 'https://i.imgur.com/3g7nmJC.png',
-            currency: 'INR',
-            key: '', // Your api key
-            amount: '5000',
-            name: 'foo',
-            prefill: {
-              email: 'void@razorpay.com',
-              contact: '9191919191',
-              name: 'Razorpay Software',
-            },
-            theme: {color: '#F37254'},
-          };
-          RazorpayCheckout.open(options)
-            .then(data => {
-              // handle success
-              this.clearCart();
-              alert(`Success: ${data.razorpay_payment_id}`);
-            })
-            .catch(error => {
-              // handle failure
-              alert(`Error: ${error.code} | ${error.description}`);
-            });
-          // },
-          //   },
-          // ]);
-        } else {
-          Alert.alert('Order Alert', 'Something went wrong');
-        }
+    var options = {
+      description: 'Credits towards consultation',
+      image: 'https://i.imgur.com/3g7nmJC.png',
+      currency: 'INR',
+      key: 'rzp_test_sz9YN3msrSYagS,WFrywkHPkQGTVW7zytpRNo4e', // Your api key
+      amount: '5000',
+      name: 'foo',
+      prefill: {
+        email: 'void@razorpay.com',
+        contact: '9191919191',
+        name: 'Razorpay Software',
       },
-    );
+      theme: {color: '#F37254'},
+    };
+    RazorpayCheckout.open(options)
+      .then(data => {
+        // handle success
+        this.clearCart();
+        alert(`Success: ${data.razorpay_payment_id}`);
+      })
+      .catch(error => {
+        // handle failure
+        alert(`Error: ${error.code} | ${error.description}`);
+      });
+    // },
+    //   },
+    // ]);
+    //     } else {
+    //       Alert.alert('Order Alert', 'Something went wrong');
+    //     }
+    //   },
+    // );
   };
   clearCart = async () => {
     const user = await getUser();

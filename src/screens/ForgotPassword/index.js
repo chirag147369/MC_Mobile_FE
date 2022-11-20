@@ -1,3 +1,4 @@
+/* eslint-disable react-native/no-inline-styles */
 import {
   Alert,
   KeyboardAvoidingView,
@@ -58,7 +59,8 @@ export class ForgotPassword extends Component {
       this.setState({showLoader});
     };
 
-    const _onResetPassword = () => {
+    const _onResetPassword = (userID, OTP, otpStatus) => {
+      console.log(userID, ' ', OTP, ' ', otpStatus, " ",password);
       // const {mobileNumber, password, confirmPassword, userID, OTP, showLoader} = this.state;
       // const {navigation} = this.props;
       if (!mobileNumber) {
@@ -109,10 +111,11 @@ export class ForgotPassword extends Component {
     };
 
     const _onSendOTP = otpStatus => {
-      if (!mobileNumber) Alert.alert('Alert', 'Please enter mobile number.');
-      else if (!mobileValidation.test(mobileNumber))
+      if (!mobileNumber) {
+        Alert.alert('Alert', 'Please enter mobile number.');
+      } else if (!mobileValidation.test(mobileNumber)) {
         Alert.alert('Alert', 'Please enter valid mobile number');
-      else {
+      } else {
         const payload = {
           mobileNumber,
         };
@@ -127,6 +130,11 @@ export class ForgotPassword extends Component {
               OTP: response.data[0].OTP,
               otpStatus,
             });
+            _onResetPassword(
+              response.data[0].id,
+              response.data[0].OTP,
+              otpStatus,
+            );
           },
         );
       }
@@ -190,7 +198,7 @@ export class ForgotPassword extends Component {
                     onChangeMobileNumber(mobileNumber)
                   }
                 />
-                {!otpStatus ? (
+                {/* {!otpStatus ? (
                   <TouchableOpacity onPress={() => _onSendOTP(true)}>
                     <LinearGradient
                       colors={[colors.prime, colors.secondary]}
@@ -246,7 +254,7 @@ export class ForgotPassword extends Component {
                       OTP has been send to your register mobile number
                     </Text>
                   </>
-                )}
+                )} */}
                 <MyTextInput
                   title={en.enter_password}
                   titleStyle={{
@@ -277,7 +285,7 @@ export class ForgotPassword extends Component {
                     this.setState({confirmPassword})
                   }
                 />
-                <MyTextInput
+                {/* <MyTextInput
                   title={en.enter_otp}
                   titleStyle={{
                     fontSize: 12,
@@ -290,10 +298,10 @@ export class ForgotPassword extends Component {
                   placeholder={en.otp_placeholder}
                   onChangeTextInput={OTP => this.setState({OTP})}
                   disabledText={true}
-                />
+                /> */}
                 <MyButton
                   title={en.reset_password}
-                  onPressButton={_onResetPassword}
+                  onPressButton={() => _onSendOTP(true)}
                 />
               </View>
               <View style={{flex: 1, justifyContent: 'space-evenly'}}>

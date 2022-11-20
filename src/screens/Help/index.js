@@ -1,3 +1,4 @@
+/* eslint-disable react-native/no-inline-styles */
 import {FlatList, Image, Text, View} from 'react-native';
 import React, {Component} from 'react';
 import {styles} from './styles';
@@ -93,7 +94,6 @@ export class Help extends Component {
                 style={{
                   fontSize: 24,
                   color: colors.black,
-                  // paddingHorizontal: 5,
                   paddingLeft: 5,
                 }}>
                 For Any Queries You Can Contact Us On
@@ -102,10 +102,10 @@ export class Help extends Component {
                 style={{
                   fontSize: 24,
                   fontWeight: 'bold',
-                  color: colors.black,
-                  // textAlign: 'left',
+                  color: colors.prime,
+                  paddingBottom: 10,
                 }}>
-                +91-9898989809
+                +91-7389576808
               </Text>
             </View>
             <View style={{paddingVertical: 10}} />
@@ -130,12 +130,12 @@ export class Help extends Component {
               </Text>
               <Text
                 style={{
-                  fontSize: 24,
+                  fontSize: 16,
                   fontWeight: 'bold',
-                  color: colors.black,
-                  // textAlign: 'left',
+                  color: colors.prime,
+                  paddingBottom: 10,
                 }}>
-                xyz@gmail.com
+                Marketconveniencecustomercare@gmail.com
               </Text>
             </View>
           </View>

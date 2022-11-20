@@ -377,9 +377,9 @@ export class Dashboard extends Component {
         start={{x: 0, y: 0}}
         end={{x: 0, y: 1}}
         style={{
-          flex: 1,
+          // flex: 1,
           width: windowWidth,
-          height: windowHeight,
+          // height: windowHeight,
           justifyContent: 'center',
           alignItems: 'center',
         }}>
@@ -395,23 +395,6 @@ export class Dashboard extends Component {
               paddingHorizontal: 10,
             }}>
             {showLoader && <ActivityLoader showLoader={showLoader} />}
-            {/* {!!address && (
-              <View
-                style={{
-                  flexDirection: 'row',
-                  justifyContent: 'center',
-                  alignItems: 'center',
-                  paddingVertical: 10,
-                  paddingHorizontal: 20,
-                }}>
-                <Ionicons
-                  name="location"
-                  size={20}
-                  color={colors.secondary + 90}
-                />
-                <Text>Deliver to {address}</Text>
-              </View>
-            )} */}
             <View
               style={{
                 width: '100%',
@@ -492,7 +475,7 @@ export class Dashboard extends Component {
               end={{x: 0, y: 1}}
               style={{
                 width: '100%',
-                height: '100%',
+                height: '45%',
                 justifyContent: 'space-evenly',
                 alignItems: 'center',
                 paddingVertical: 20,
@@ -517,7 +500,7 @@ export class Dashboard extends Component {
               </View>
               <ScrollView
                 style={{
-                  // flex: 1,
+                  flex: 1,
                   // height: '100%',
                   width: '100%',
                   paddingHorizontal: 20,
