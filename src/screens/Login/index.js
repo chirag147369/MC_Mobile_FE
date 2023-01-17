@@ -1,3 +1,4 @@
+/* eslint-disable react-native/no-inline-styles */
 import {
   Alert,
   BackHandler,
@@ -6,6 +7,7 @@ import {
   Text,
   View,
 } from 'react-native';
+
 import React, {Component} from 'react';
 import {styles} from './styles';
 import colors from '../../utility/colors';
@@ -28,7 +30,7 @@ import {
   windowHeight,
   windowWidth,
 } from '../../utility/util';
-
+import {Checkbox} from 'react-native-paper';
 export class Login extends Component {
   constructor(props) {
     super(props);
@@ -37,9 +39,11 @@ export class Login extends Component {
       password: '',
       rememberMe: false,
       showLoader: false,
+      tcChecked: false,
+      privacyChecked: false,
     };
   }
-
+  // const [isSelected, setSelection] = useState(false);
   toggleLoader = showLoader => {
     this.setState({showLoader});
   };
@@ -83,18 +87,28 @@ export class Login extends Component {
               token: response.data[0].token,
             }),
           );
-          if (this.props.route?.params?.from != NavigationRoutes.ProductDetails)
+          if (
+            this.props.route?.params?.from != NavigationRoutes.ProductDetails
+          ) {
             navigation.navigate(NavigationRoutes.Dashboard);
-          else navigation.goBack(NavigationRoutes.ProductDetails);
+          } else {
+            navigation.goBack(NavigationRoutes.ProductDetails);
+          }
         },
       );
     }
   };
 
   render() {
-    const {mobileNumber, password, showLoader, rememberMe} = this.state;
+    const {
+      mobileNumber,
+      password,
+      showLoader,
+      rememberMe,
+      tcChecked,
+      privacyChecked,
+    } = this.state;
     const {navigation} = this.props;
-
     return (
       <ScrollView style={{width: windowWidth, height: windowHeight}}>
         <LinearGradient
@@ -207,6 +221,56 @@ export class Login extends Component {
                     {en.forgot_your_password}
                   </Text>
                 </TouchableOpacity>
+                <View>
+                  <View style={{flexDirection: 'row'}}>
+                    <Checkbox
+                      status={tcChecked ? 'checked' : 'unchecked'}
+                      onPress={() => {
+                        this.setState({tcChecked: !tcChecked});
+                      }}
+                    />
+                    <Text
+                      style={{
+                        fontSize: 10,
+                        fontWeight: 'bold',
+                        color: colors.gray + 90,
+                        paddingTop: 10,
+                      }}>
+                      {en.I_agree_to}
+                    </Text>
+                    <TouchableOpacity onPress={null}>
+                      <Text
+                        style={{
+                          fontSize: 10,
+                          fontWeight: 'bold',
+                          color: colors.blue,
+                          paddingTop: 10,
+                        }}>
+                        {en.terms_and_condition}
+                      </Text>
+                    </TouchableOpacity>
+                    <Text
+                      style={{
+                        fontSize: 10,
+                        fontWeight: 'bold',
+                        color: colors.gray + 90,
+                        paddingTop: 10,
+                      }}>
+                      {en.and}
+                    </Text>
+                    <TouchableOpacity onPress={null}>
+                      <Text
+                        style={{
+                          fontSize: 10,
+                          fontWeight: 'bold',
+                          color: colors.blue,
+                          paddingTop: 10,
+                        }}>
+                        {en.privacy_policies}
+                      </Text>
+                    </TouchableOpacity>
+                  </View>
+                </View>
               </View>
               <View style={{flex: 1}} />
               <View style={{flex: 1, justifyContent: 'space-evenly'}}>
@@ -243,12 +307,13 @@ export class Login extends Component {
                     if (
                       this.props.route?.params?.from !=
                       NavigationRoutes.ProductDetails
-                    )
+                    ) {
                       navigation.navigate(NavigationRoutes.Signup);
-                    else
+                    } else {
                       navigation.navigate(NavigationRoutes.Signup, {
                         from: this.props.route?.params?.from,
                       });
+                    }
                   }}
                   buttonStyle={{marginVertical: 5}}
                 />

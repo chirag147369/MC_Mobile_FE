@@ -42,4 +42,8 @@ export const en = {
   otp_placeholder: 'Enter otp',
   search_product_placeholder: 'Enter text here to search products',
   coupon_code_placeholder: 'Enter coupone code here',
+  I_agree_to: 'I agree to the',
+  terms_and_condition: ' T & C',
+  and: ' and ',
+  privacy_policies: 'Privacy Policy.',
 };

@@ -13,6 +13,7 @@ const colors = {
   deliveredStatusColor: '#5af542',
   cancelStatusColor: '#ed324b',
   black: '#000000',
+  blue: '#0000FF',
 };
 
 export default colors;

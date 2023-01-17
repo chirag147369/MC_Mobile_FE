@@ -377,9 +377,7 @@ export class Dashboard extends Component {
         start={{x: 0, y: 0}}
         end={{x: 0, y: 1}}
         style={{
-          // flex: 1,
           width: windowWidth,
-          // height: windowHeight,
           justifyContent: 'center',
           alignItems: 'center',
         }}>
