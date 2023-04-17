@@ -6,6 +6,7 @@ import {
   ScrollView,
   Text,
   View,
+  Linking,
 } from 'react-native';
 
 import React, {Component} from 'react';
@@ -109,6 +110,13 @@ export class Login extends Component {
       privacyChecked,
     } = this.state;
     const {navigation} = this.props;
+
+    const openPrivacyPolicy = () => {
+      const url =
+        'https://doc-hosting.flycricket.io/market-convenience-privacy-policy/75c1a751-304e-47d5-985f-0ab1758a3fd4/privacy';
+      Linking.openURL(url);
+    };
+
     return (
       <ScrollView style={{width: windowWidth, height: windowHeight}}>
         <LinearGradient
@@ -238,7 +246,7 @@ export class Login extends Component {
                       }}>
                       {en.I_agree_to}
                     </Text>
-                    <TouchableOpacity onPress={null}>
+                    <TouchableOpacity onPress={openPrivacyPolicy}>
                       <Text
                         style={{
                           fontSize: 10,
@@ -258,7 +266,7 @@ export class Login extends Component {
                       }}>
                       {en.and}
                     </Text>
-                    <TouchableOpacity onPress={null}>
+                    <TouchableOpacity onPress={openPrivacyPolicy}>
                       <Text
                         style={{
                           fontSize: 10,
