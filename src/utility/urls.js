@@ -1,4 +1,5 @@
-const baseURL = 'https://ecom-d0607.herokuapp.com/api/';
+// const baseURL = 'https://ecom-d0607.herokuapp.com/api/';
+const baseURL = 'http://68.183.247.118:5000/api/';
 
 const urls = {
   login: baseURL + 'auth/login',
